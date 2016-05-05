@@ -1,0 +1,12 @@
+name: "auto-generated-pkg-bfa3b2cf-a79c-48fd-8e20-1edfe2c519c6"
+productVersion: "7.0.1-SNAPSHOT"
+data:
+- locator: "composite-blueprint/GitLab_CE.yaml"
+  name: "GitLab_CE"
+  description: "GitLab_CE"
+  dependencies:
+  - "software-component/Software.GitLab_CE.yaml"
+- locator: "software-component/Software.GitLab_CE.yaml"
+  name: "GitLab_CE"
+  description: "Installs and configures GitLab Community edition"
+exportTime: "2016-05-05T22:22:50.217Z"

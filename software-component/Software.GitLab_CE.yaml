@@ -1,0 +1,109 @@
+'@type': "SoftwareComponentType"
+createdDate: "2016-05-02T22:51:36.936Z"
+lastUpdated: "2016-05-02T22:53:12.495Z"
+id: "Software.GitLab_CE"
+name: "GitLab_CE"
+description: "Installs and configures GitLab Community edition"
+publishStatus: "PUBLISHED"
+publishStatusName: "Published"
+schema:
+  fields:
+  - id: "GitLab_URL"
+    label: "GitLab_URL"
+    description: ""
+    dataType:
+      type: "primitive"
+      typeId: "STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "derivedValue"
+        value:
+          type: "constant"
+      - type: "editable"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: false
+    isMultiValued: false
+  - id: "host"
+    label: "Container"
+    description: ""
+    dataType:
+      type: "ref"
+      componentTypeId: "com.vmware.csp.iaas.blueprint.service"
+      classId: "Infrastructure.Machine.Schema"
+      label: "Machine"
+    state:
+      dependencies: []
+      facets:
+      - type: "mandatory"
+        value:
+          type: "constant"
+          value:
+            type: "boolean"
+            value: true
+      - type: "visible"
+        value:
+          type: "constantClause"
+          value:
+            type: "boolean"
+            value: false
+      - type: "internal"
+        value:
+          type: "constantClause"
+          value:
+            type: "boolean"
+            value: true
+    isMultiValued: false
+  - id: "LoginUser"
+    label: "LoginUser"
+    description: ""
+    dataType:
+      type: "primitive"
+      typeId: "STRING"
+    state:
+      dependencies: []
+      facets:
+      - type: "defaultValue"
+        value:
+          type: "constant"
+          value:
+            type: "string"
+            value: "root"
+    isMultiValued: false
+containerFieldId: "host"
+lifecycleTasks:
+- createdDate: "2016-05-02T22:51:36.938Z"
+  lastUpdated: "2016-05-03T22:06:50.761Z"
+  script:
+    scriptContent: "yum -y install curl policycoreutils openssh-server openssh-clients\n\
+      yum -y install postfix\ncurl -sS https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.rpm.sh\
+      \ | bash\nyum -y install gitlab-ce\n"
+    isRebootAfter: false
+    scriptTypeId: "Bash"
+  taskDescriptorRef:
+    id: "INSTALL"
+    label: "Install"
+- createdDate: "2016-05-03T21:37:34.589Z"
+  lastUpdated: "2016-05-03T22:06:50.761Z"
+  script:
+    scriptContent: "export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin\n\
+      echo $PATH\ngitlab-ctl reconfigure"
+    isRebootAfter: false
+    scriptTypeId: "Bash"
+  taskDescriptorRef:
+    id: "START"
+    label: "Start"
+- createdDate: "2016-05-02T22:51:36.937Z"
+  lastUpdated: "2016-05-03T22:06:50.761Z"
+  script:
+    scriptContent: "systemctl stop firewalld\nsystemctl disable firewalld\nsystemctl\
+      \ enable sshd\nsystemctl start sshd\nsystemctl enable postfix\nsystemctl start\
+      \ postfix\nexport my_ip=$(hostname  -I | cut -f1 -d' ')\nGitLab_URL=http://$my_ip"
+    isRebootAfter: false
+    scriptTypeId: "Bash"
+  taskDescriptorRef:
+    id: "CONFIGURE"
+    label: "Configure"
